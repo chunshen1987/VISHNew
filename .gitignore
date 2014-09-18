@@ -4,4 +4,4 @@ movie/*
 Initial/*
 EOS/*
 *.o
-
+*.e
