@@ -338,9 +338,11 @@ CSHEN======output OSCAR file Header=========================================
 CSHEN======output OSCAR file Header end=====================================
 
 CSHEN======set up output file for hydro evolution history===================
+#ifdef USE_HDF5
       if(IhydroJetoutput .eq. 1) then
          Call setHydroFiles(NX0, NX, DX, 5, NY0, NY, DY, 5, T0, DT, 5)
       endif
+#endif
 
       CALL CPU_TIME(cpu_start) !Tic
       Call Mainpro(NX0,NY0,NZ0,NX,NY,NZ,NXPhy0,NYPhy0,
@@ -1216,7 +1218,8 @@ CSHEN====END====================================================================
          enddo
          enddo
       endif
-      
+
+#ifdef USE_HDF5
       if(IhydroJetoutput .eq. 1) then
 !        output hydro infos
 !        Units: [ed]=GeV/fm^3, [sd]=fm^-3, [p]=GeV/fm^3, [T]=GeV, [Vx]=[Vy]=1
@@ -1227,6 +1230,7 @@ CSHEN====END====================================================================
      &      Pi22*HbarC, Pi22*HbarC*0.0d0, Pi33*HbarC, PPI*HbarC)
 !        output hydro infos, end
       endif
+#endif
 
 CSHEN===========================================================================
 C====output the OSCAR body file from hydro evolution============ ===============
