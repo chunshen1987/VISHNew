@@ -338,11 +338,15 @@ CSHEN======output OSCAR file Header=========================================
 CSHEN======output OSCAR file Header end=====================================
 
 CSHEN======set up output file for hydro evolution history===================
-#ifdef USE_HDF5
       if(IhydroJetoutput .eq. 1) then
+#ifdef USE_HDF5
          Call setHydroFiles(NX0, NX, DX, 5, NY0, NY, DY, 5, T0, DT, 5)
-      endif
+#else
+         Call setHydroFiles(3801, 'results/JetData.dat',
+     &                      3802, 'results/JetCtl.dat')
+         Call writeHydroCtlSparse(NX0,NX,DX,5,NY0,NY,DY,5,T0,DT,1)
 #endif
+      endif
 
       CALL CPU_TIME(cpu_start) !Tic
       Call Mainpro(NX0,NY0,NZ0,NX,NY,NZ,NXPhy0,NYPhy0,
@@ -1219,18 +1223,20 @@ CSHEN====END====================================================================
          enddo
       endif
 
-#ifdef USE_HDF5
       if(IhydroJetoutput .eq. 1) then
 !        output hydro infos
 !        Units: [ed]=GeV/fm^3, [sd]=fm^-3, [p]=GeV/fm^3, [T]=GeV, [Vx]=[Vy]=1
 !        Units: [Pi]=GeV/fm^3, [PPi]=GeV/fm^3
+#ifdef USE_HDF5
          Call writeHydroBlock(ITime-1, Ed*HbarC, Sd, PL*HbarC,
      &      Temp*HbarC,Vx, Vy, Pi00*HbarC, Pi01*HbarC, Pi02*HbarC, 
      &      Pi02*HbarC*0.0d0, Pi11*HbarC, Pi12*HbarC, Pi12*HbarC*0.0d0,
      &      Pi22*HbarC, Pi22*HbarC*0.0d0, Pi33*HbarC, PPI*HbarC)
+#else
+         Call writeHydroBlockSparse(Time,Ed*HbarC,Sd,Temp*HbarC,Vx,Vy)
+#endif
 !        output hydro infos, end
       endif
-#endif
 
 CSHEN===========================================================================
 C====output the OSCAR body file from hydro evolution============ ===============

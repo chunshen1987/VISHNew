@@ -18,7 +18,7 @@ get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 
 if (Fortran_COMPILER_NAME MATCHES "gfortran.*")
   # gfortran
-  set (CMAKE_Fortran_FLAGS_RELEASE "-O3 -cpp")
+  set (CMAKE_Fortran_FLAGS_RELEASE "-O3 -cpp -fno-align-commons")
   set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -cpp")
 elseif (Fortran_COMPILER_NAME MATCHES "ifort.*")
   # ifort (untested)

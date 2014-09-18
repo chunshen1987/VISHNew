@@ -23,6 +23,7 @@ else (EnableHDF5)
     Initialization-1.03.for
     InputFun-1.29RC6.for 
     cornelius2.f90
+    JetOutput-0.8.for
     )
 endif (EnableHDF5)
 
