@@ -14,3 +14,6 @@ For references, please see the following papers:
 
 * Huichao Song, Ulrich W. Heinz, "Multiplicity scaling in ideal and viscous hydrodynamics",
 [http://arxiv.org/abs/arXiv:0805.1756]
+
+Compile note:
+use -DEnableHDF5=ON to link hydro code with HDF5 Library

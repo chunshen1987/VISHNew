@@ -155,6 +155,9 @@ C *******************************J.Liu changes*******************************
       Integer InitialURead
       Common/LDInitial/ InitialURead  ! IintURead =1 read initial velocity profile
 C *******************************J.Liu changes end***************************
+      
+      Integer Initialpitensor
+      Common/Initialpi/ Initialpitensor
 
       call prepareInputFun() ! this is the initialization function in InputFun.for
 
@@ -181,6 +184,8 @@ C------- Parameter for viscous coeficients  ------------------------
 
       READ(1,*) ViscousC    ! eta/s  (constant)    (0: no shear vis )
       READ(1,*) VisBeta     !\tau_Pi=VisBeta*6.0\eta /(ST)
+      READ(1,*) IVisflag     !Flag for temperature dependent eta/s(T)
+
       READ(1,*) VisBulk     !VisBulk=C;  Xi/s= C* (Xi/S)_min  (C=0, no bulk vis; or C>1 )
       READ(1,*) IRelaxBulk  !type of bulk relaxation time (0: critical slowing down; 1: contant Relax Time
                             !2: \tau_PI=1.5/(2\piT))
@@ -222,8 +227,12 @@ C------- Parameters for initial profile from Laudan matching--------------------
       Read(1,*) Cha
       Read(1,*) Cha
       Read(1,*) InitialURead  
-      CLOSE(1)
 C ***************************J.Liu changes end***************************
+
+      Read(1,*) Cha
+      Read(1,*) Cha
+      Read(1,*) Initialpitensor
+      CLOSE(1)
 C===========================================================================
 
       DX=0.1d0
@@ -242,8 +251,9 @@ C===========================================================================
      &    "LS=", LS, "R0Bdry", R0Bdry, "VisBeta=", VisBeta,
      &    "DX=", DX, "DY=", DY, "DT_1=", DT_1,
      &    "NDX=", NDX, "NDY=", NDY, "NDT=", NDT,
-     &    "IhydroJetoutput=", IhydroJetoutput
-
+     &    "IhydroJetoutput=", IhydroJetoutput,
+     &    "IVisflag=", IVisflag,
+     &    "Initialpitensor=", Initialpitensor
 
       ddx=dx
       ddy=dy
@@ -696,13 +706,15 @@ CSHEN===EOS from tables end====================================================
           CPi12 = Pi12(I,J,1)    
           CPi22 = Pi22(I,J,1)     
           CPi33 = Pi33(I,J,1)    
+          CPPI = PPI(I,J,1)
 
           WRITE(99,'(99E20.8E3)') Time,DA0,DA1,DA2,VZCM,VRCM,
      &                  Ed(I,J,1)*HbarC,BN,
-     &                  Temp(I,J,1)*HbarC,BAMU,SMU, PDec2, 
+     &                  Temp(I,J,1)*HbarC,BAMU,SMU, PDec2*HbarC, 
      &                  CPi33*HbarC,
      &                  CPi00*HbarC,CPi01*HbarC,CPi02*HbarC,
      &                  CPi11*HbarC,CPi12*HbarC,CPi22*HbarC
+     &                  CPPI*HbarC
           
           TM = Time
           XM = XX
@@ -2538,10 +2550,15 @@ C====eta/s dependent on local temperature==================================
       Parameter (pi=3.1415926d0)
 
       Integer :: IVisflag
-
       Common /ViscousC / ViscousC,VisBeta, IVisflag ! Related to Shear Viscosity
 
-      ViscousCTemp = ViscousC
+      TT_GeV = TT*HbarC
+      if(TT_GeV .gt. 0.165) then
+          ViscousCTemp = 0.08
+      else
+          ViscousCTemp = 0.5 + (0.5 - 0.08)/(0.1 - 0.165)*(TT_GeV - 0.1)
+      endif
+
       return
       end
 
