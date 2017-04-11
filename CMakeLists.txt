@@ -1,5 +1,5 @@
-cmake_minimum_required (VERSION 2.6)
-project (VISHNew Fortran)
+cmake_minimum_required (VERSION 3.0 FATAL_ERROR)
+project (VISHNew C Fortran)
 
 # make sure that the default is a RELEASE
 if (NOT CMAKE_BUILD_TYPE)
@@ -8,12 +8,17 @@ if (NOT CMAKE_BUILD_TYPE)
        FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
-option (EnableHDF5 "EnableHDF5" OFF)
+message("Looking for HDF5 ...")
+find_package(HDF5)
+if(${HDF5_FOUND})
+    include_directories(${HDF5_INCLUDE_DIRS})
+    set(_hdf5_libs ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
+endif(${HDF5_FOUND})
 
 # FFLAGS depend on the compiler
-if (EnableHDF5)
+if (${HDF5_FOUND})
   set (CMAKE_Fortran_COMPILER "h5fc")
-endif (EnableHDF5)
+endif (${HDF5_FOUND})
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 
 if (Fortran_COMPILER_NAME MATCHES "gfortran.*")
@@ -29,6 +34,8 @@ elseif (Fortran_COMPILER_NAME MATCHES "h5fc")
   set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -cpp")
 else (Fortran_COMPILER_NAME MATCHES "gfortran.*")
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
+  set (CMAKE_Fortran_FLAGS_RELEASE "-O3 -cpp -fno-align-commons")
+  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -cpp")
 endif (Fortran_COMPILER_NAME MATCHES "gfortran.*")
 
 add_subdirectory (src)

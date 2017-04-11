@@ -1,4 +1,4 @@
-if (EnableHDF5)
+if (${HDF5_FOUND})
   set (LIBSRC Jetoutputh5.for)
   add_library (hdf5 ${LIBSRC})
   add_executable(VISHNew.e
@@ -13,7 +13,7 @@ if (EnableHDF5)
     )
   target_link_libraries (VISHNew.e hdf5)
   set_target_properties (VISHNew.e PROPERTIES COMPILE_FLAGS "-DUSE_HDF5")
-else (EnableHDF5)
+else (${HDF5_FOUND})
   add_executable(VISHNew.e
     VISH2p1V1.10.0.for 
     PhyBdary-1.10.for 
@@ -25,6 +25,6 @@ else (EnableHDF5)
     cornelius2.f90
     JetOutput-0.8.for
     )
-endif (EnableHDF5)
+endif (${HDF5_FOUND})
 
 install (TARGETS VISHNew.e DESTINATION ${CMAKE_HOME_DIRECTORY})
