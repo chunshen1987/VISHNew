@@ -1206,8 +1206,8 @@
 !     that provided by hydro simulation.
       Implicit none
       double precision :: cutT
-      Integer, Parameter :: NXPhy0=-130,NYPhy0=-130   !Physical initial grid size
-      Integer, Parameter :: NXPhy=130,NYPhy=130       !Physical end grid size
+      Integer, Parameter :: NXPhy0=-150,NYPhy0=-150   !Physical initial grid size
+      Integer, Parameter :: NXPhy=150,NYPhy=150       !Physical end grid size
 
       double precision, Parameter :: PI=3.1415926585d0
       Integer :: I=1, J=1, K=1, L=1     !loop variables
